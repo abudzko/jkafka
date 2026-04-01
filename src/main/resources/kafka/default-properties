@@ -1,0 +1,11 @@
+bootstrap.servers = localhost:10001, localhost:10002
+group.id = 087833cb-bfc7-4979-a4ae-d0e31e5bbf6d
+key.deserializer = org.apache.kafka.common.serialization.StringDeserializer
+value.deserializer = org.apache.kafka.common.serialization.StringDeserializer
+key.serializer = org.apache.kafka.common.serialization.StringSerializer
+value.serializer = org.apache.kafka.common.serialization.StringSerializer
+retries = 3
+max.block.ms = 4000
+reconnect.backoff.ms = 1000
+request.timeout.ms = 3000
+delivery.timeout.ms = 4000

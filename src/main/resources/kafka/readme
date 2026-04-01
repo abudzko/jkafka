@@ -1,0 +1,9 @@
+Helps to connect to kafka cluster, read and send messages
+
+Supported properties names you can find in kafka-clients-3.8.1.jar
+https://mvnrepository.com/artifact/org.apache.kafka/kafka-clients
+in next classes:
+org.apache.kafka.clients.CommonClientConfigs
+org.apache.kafka.clients.consumer.ConsumerConfig
+org.apache.kafka.clients.producer.ProducerConfig
+org.apache.kafka.common.config.SaslConfigs
