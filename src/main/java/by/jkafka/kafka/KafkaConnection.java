@@ -28,8 +28,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
+@Getter
 public class KafkaConnection {
-    @Getter
     private final ConnectionConfig connectionConfig;
 
     public KafkaConnection(ConnectionConfig connectionConfig) {

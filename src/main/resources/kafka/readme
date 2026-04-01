@@ -7,3 +7,4 @@ org.apache.kafka.clients.CommonClientConfigs
 org.apache.kafka.clients.consumer.ConsumerConfig
 org.apache.kafka.clients.producer.ProducerConfig
 org.apache.kafka.common.config.SaslConfigs
+

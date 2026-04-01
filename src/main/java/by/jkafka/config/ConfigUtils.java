@@ -27,8 +27,7 @@ public class ConfigUtils {
     public static Map<String, String> parseConfig(String source) {
         return source.lines()
                 .filter(StringUtils::hasLength)
-                .map(line -> line.split(KEY_VALUE_SEPARATOR))
-                .filter(keyValueStr -> keyValueStr.length == 2)
+                .map(line -> extractKeyValuePair(line))
                 .map(keyValueStr -> {
                     var key = keyValueStr[0].trim();
                     var value = keyValueStr[1].trim();
@@ -40,11 +39,18 @@ public class ConfigUtils {
                         LinkedHashMap::new));
     }
 
+    private static String[] extractKeyValuePair(String line) {
+        var idx = line.indexOf(KEY_VALUE_SEPARATOR);
+        if (idx > 0) {
+            return new String[]{line.substring(0, idx), line.substring(idx + 1)};
+        }
+        return null;
+    }
+
     public static Map<String, String> parseUiConfig(String source) {
         return source.lines()
                 .filter(StringUtils::hasLength)
-                .map(line -> line.split(KEY_VALUE_SEPARATOR))
-                .filter(keyValueStr -> keyValueStr.length == 2)
+                .map(ConfigUtils::extractKeyValuePair)
                 .map(keyValueStr -> {
                     var key = keyValueStr[0].trim();
                     var value = keyValueStr[1].trim();

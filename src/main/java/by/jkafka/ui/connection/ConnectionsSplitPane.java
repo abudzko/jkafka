@@ -1,7 +1,7 @@
 package by.jkafka.ui.connection;
 
-import by.jkafka.config.ConnectionConfigManager;
 import by.jkafka.config.ConnectionConfig;
+import by.jkafka.config.ConnectionConfigManager;
 import by.jkafka.ui.connection.panes.ConnectionPane;
 import by.jkafka.ui.connection.panes.ReadmePane;
 import javafx.scene.control.SplitPane;
@@ -12,7 +12,6 @@ import javafx.scene.control.TreeView;
 
 import java.util.Map;
 import java.util.Objects;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -26,22 +25,16 @@ public class ConnectionsSplitPane extends SplitPane {
     private final TreeView<String> connectionTreeView;
     private final TabPane rightSideTabPane;
     private final Map<String, Tab> connectionTabs = new ConcurrentHashMap<>();
-    private final Map<String, ConnectionConfig> clusterConfigMap = new ConcurrentHashMap<>();
+    private final Map<String, ConnectionConfig> connnectionConfigMap = new ConcurrentHashMap<>();
 
     public ConnectionsSplitPane() {
         setDividerPositions(0.2);
         rightSideTabPane = new TabPane();
-        ConnectionConfigManager.readConnectionConfigs().forEach(connectionConfig -> {
-            clusterConfigMap.put(connectionConfig.getConnectionId(), connectionConfig);
-        });
         connectionTreeView = createConnectionsTreeView();
+        ConnectionConfigManager.readConnectionConfigs().forEach(this::createConnectionTab);
         getItems().addAll(connectionTreeView, rightSideTabPane);
         rightSideTabPane.prefWidthProperty().bind(widthProperty());
         rightSideTabPane.prefHeightProperty().bind(heightProperty());
-    }
-
-    private static String createConnectionId() {
-        return UUID.randomUUID().toString().substring(0, 8);
     }
 
     private TreeView<String> createConnectionsTreeView() {
@@ -55,43 +48,45 @@ public class ConnectionsSplitPane extends SplitPane {
 
                 } else if (event.getClickCount() == 2) { // Double click
                     var connectionId = selectedItem.getValue();
-                    var tab = getOrCreateConnectionTab(connectionId);
-                    rightSideTabPane.getSelectionModel().select(tab);
+                    var tab = connectionTabs.get(connectionId);
+                    if (isConnectionTabOpen(connectionId)) {
+                        rightSideTabPane.getSelectionModel().select(tab);
+                    } else {
+                        rightSideTabPane.getTabs().add(tab);
+                        rightSideTabPane.getSelectionModel().select(tab);
+                    }
                 }
             }
-        });
-        clusterConfigMap.keySet().forEach(connectionId -> {
-            connectionsTreeItems.getChildren().add(new TreeItem<>(connectionId));
         });
         treeView.setRoot(connectionsTreeItems);
         return treeView;
     }
 
-    public void createConnection() {
-        var connectionId = createConnectionId();
-        addConnectionToTreeView(connectionId);
-        getOrCreateConnectionTab(connectionId);
+    public void createNewConnectionTab(ClusterConfigTemplate connectionConfigTemplate) {
+        var connectionConfig = ConnectionConfigManager.createConnectionConfig(connectionConfigTemplate);
+        rightSideTabPane.getTabs().add(createConnectionTab(connectionConfig));
     }
 
-    private void addConnectionToTreeView(String connectionId) {
-        var treeItem = new TreeItem<>(connectionId);
-        connectionTreeView.getRoot().getChildren().add(treeItem);
-    }
-
-    private Tab getOrCreateConnectionTab(String connectionId) {
+    private boolean isConnectionTabOpen(String connectionId) {
         var tabs = rightSideTabPane.getTabs();
-        return tabs.stream()
-                .filter(tab -> Objects.equals(tab.getId(), connectionId))
-                .findFirst()
-                .orElseGet(() -> {
-                    var connectionTab = connectionTabs.computeIfAbsent(
-                            connectionId,
-                            id -> createConnectionTab(clusterConfigMap.getOrDefault(
-                                    connectionId,
-                                    ConnectionConfigManager.createDefaultClusterConfig(connectionId))));
-                    tabs.add(connectionTab);
-                    return connectionTab;
-                });
+        return tabs.stream().anyMatch(tab -> Objects.equals(tab.getId(), connectionId));
+    }
+
+    private Tab createConnectionTab(ConnectionConfig connectionConfig) {
+        var connectionId = connectionConfig.getConnectionId();
+
+        connnectionConfigMap.put(connectionId, connectionConfig);
+        connectionTreeView.getRoot().getChildren().add(new TreeItem<>(connectionId));
+
+        var connectionTab = new Tab(connectionId);
+        connectionTab.setId(connectionId);
+        var newConnectionPane = new ConnectionPane(connectionConfig);
+        connectionTab.setContent(newConnectionPane);
+
+        newConnectionPane.prefWidthProperty().bind(rightSideTabPane.widthProperty());
+        newConnectionPane.prefHeightProperty().bind(rightSideTabPane.heightProperty());
+        connectionTabs.put(connectionId, connectionTab);
+        return connectionTab;
     }
 
     public Tab getOrCreateReadmeTab() {
@@ -104,18 +99,6 @@ public class ConnectionsSplitPane extends SplitPane {
                     tabs.add(readmeTab);
                     return readmeTab;
                 });
-    }
-
-    private Tab createConnectionTab(ConnectionConfig connectionConfig) {
-        String connectionId = connectionConfig.getConnectionId();
-        var connectionTab = new Tab(connectionId);
-        connectionTab.setId(connectionId);
-        var newConnectionPane = new ConnectionPane(connectionConfig);
-        connectionTab.setContent(newConnectionPane);
-
-        newConnectionPane.prefWidthProperty().bind(rightSideTabPane.widthProperty());
-        newConnectionPane.prefHeightProperty().bind(rightSideTabPane.heightProperty());
-        return connectionTab;
     }
 
     private Tab createReadmeTab() {

@@ -8,6 +8,5 @@ public interface OnReadTopicCallbacks {
     void stopReading(String topic);
 
     default void consume(ConsumerRecord<String, Object> record) {
-
     }
 }

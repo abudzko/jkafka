@@ -57,7 +57,11 @@ public class TopicReader {
                 var records = consumer.poll(Duration.ofMillis(100));
                 for (ConsumerRecord<String, Object> record : records) {
                     if (eventFilter.match(record)) {
-                        readCallbacks.consume(record);
+                        try {
+                            readCallbacks.consume(record);
+                        } catch (Throwable e) {
+                            e.printStackTrace();// Debug in console
+                        }
                     }
                     readEventsCount.incrementAndGet();
                 }

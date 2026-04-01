@@ -37,6 +37,7 @@ public class LogPane extends Pane {
     private void updateView() {
         AtomicBoolean newLogs = Logger.LOGGER.getNewLogs();
         if (newLogs.get()) {
+            // TODO BUG Two Connection tabs set newLogs flag
             newLogs.set(false);
             var countDownLatch = new CountDownLatch(1);
             Platform.runLater(() -> {
