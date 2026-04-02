@@ -51,12 +51,12 @@ public class KafkaConnection {
             return true;
         } catch (org.apache.kafka.common.errors.TimeoutException e) {
             String msg = "Testing connection: failed to connect due to timeout " + seconds + " sec. " + e.getMessage();
-            System.err.println(msg);
             log(msg);
+            Logger.LOGGER.debug(e);
         } catch (Throwable e) {
             String msg = "Testing connection: error in consumer: " + e.getMessage();
-            System.err.println(msg);
             log(msg);
+            Logger.LOGGER.debug(e);
         }
         return false;
     }
@@ -89,7 +89,8 @@ public class KafkaConnection {
                 } catch (InterruptedException | ExecutionException | TimeoutException e) {
                     producer.close();
                     var msg = "Error in producer: " + e.getMessage();
-                    System.err.println(msg);
+                    Logger.LOGGER.log(msg);
+                    Logger.LOGGER.debug(e);
                 }
             });
         }
@@ -104,12 +105,12 @@ public class KafkaConnection {
             return new ArrayList<>(topics.keySet());
         } catch (org.apache.kafka.common.errors.TimeoutException e) {
             String msg = "Getting topics: failed to connect due to timeout " + seconds + " sec. " + e.getMessage();
-            System.err.println(msg);
             log(msg);
+            Logger.LOGGER.debug(e);
         } catch (Exception e) {
             String msg = "Getting topics: failed to connect: " + e.getMessage();
-            System.err.println(msg);
             log(msg);
+            Logger.LOGGER.debug(e);
         }
         return List.of();
     }
@@ -141,12 +142,12 @@ public class KafkaConnection {
             return Optional.of(topicInfo);
         } catch (org.apache.kafka.common.errors.TimeoutException e) {
             String msg = opName + ": failed to connect due to timeout " + seconds + " sec. " + e.getMessage();
-            System.err.println(msg);
             log(msg);
+            Logger.LOGGER.debug(e);
         } catch (Exception e) {
             String msg = opName + ": failed to connect: " + e.getMessage();
-            System.err.println(msg);
             log(msg);
+            Logger.LOGGER.debug(e);
         }
         return Optional.empty();
     }

@@ -8,3 +8,6 @@ org.apache.kafka.clients.consumer.ConsumerConfig
 org.apache.kafka.clients.producer.ProducerConfig
 org.apache.kafka.common.config.SaslConfigs
 
+There are two type of template of connection: default(not secure) and sasl scram
+
+Source code https://github.com/abudzko/jkafka

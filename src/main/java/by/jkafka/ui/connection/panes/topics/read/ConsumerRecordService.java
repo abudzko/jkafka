@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 public class ConsumerRecordService {
+    // TODO save event data in rolling file
     public void saveRecord(ConsumerRecord<String, Object> record) {
         Logger.LOGGER.log(String.format(
                 "Received message: Topic: %s, key size = %s, value size= %s, partition = %d, offset = %d",

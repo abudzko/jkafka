@@ -43,6 +43,7 @@ public class TopicReader {
                 read();
             } catch (Throwable e) {
                 log("Topic reading: failed. " + e.getMessage());
+                Logger.LOGGER.debug(e);
             }
         });
         t.setDaemon(true);
@@ -60,7 +61,7 @@ public class TopicReader {
                         try {
                             readCallbacks.consume(record);
                         } catch (Throwable e) {
-                            e.printStackTrace();// Debug in console
+                            Logger.LOGGER.debug(e);
                         }
                     }
                     readEventsCount.incrementAndGet();
@@ -72,6 +73,7 @@ public class TopicReader {
         } catch (Throwable e) {
             var msg = "Error in consumer. Topic: " + topic + ". " + e.getMessage();
             log(msg);
+            Logger.LOGGER.debug(e);
         } finally {
             stop();
             readCallbacks.stopReading(topic);

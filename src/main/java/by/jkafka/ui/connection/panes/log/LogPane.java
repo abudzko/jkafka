@@ -25,7 +25,7 @@ public class LogPane extends Pane {
                 try {
                     updateView();
                 } catch (Throwable e) {
-                    System.err.println(e.getMessage());
+                    Logger.LOGGER.debug(e);
                 }
             }
         });

@@ -17,8 +17,13 @@ public class FileUtils {
         }
     }
 
+    /**
+     * Creates parent dirs if not exist
+     */
     @SneakyThrows
     public static void save(Path path, String source) {
-        Files.writeString(path, source);
+        var absolutePath = path.toAbsolutePath().normalize();
+        Files.createDirectories(absolutePath.getParent());
+        Files.writeString(absolutePath, source);
     }
 }

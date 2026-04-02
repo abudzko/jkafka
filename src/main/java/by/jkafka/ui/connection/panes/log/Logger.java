@@ -34,4 +34,10 @@ public class Logger {
         newLogs.set(true);
     }
 
+    /**
+     * Debug in console
+     */
+    public void debug(Throwable t) {
+        t.printStackTrace();
+    }
 }

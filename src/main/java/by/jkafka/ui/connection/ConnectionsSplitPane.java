@@ -76,8 +76,10 @@ public class ConnectionsSplitPane extends SplitPane {
         var connectionId = connectionConfig.getConnectionId();
 
         connnectionConfigMap.put(connectionId, connectionConfig);
+        // TODO Add user friendly name
         connectionTreeView.getRoot().getChildren().add(new TreeItem<>(connectionId));
 
+        // TODO Add user friendly name
         var connectionTab = new Tab(connectionId);
         connectionTab.setId(connectionId);
         var newConnectionPane = new ConnectionPane(connectionConfig);

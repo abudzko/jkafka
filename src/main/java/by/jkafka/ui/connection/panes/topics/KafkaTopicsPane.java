@@ -245,7 +245,7 @@ public class KafkaTopicsPane extends Pane {
                         });
                     } catch (Exception e) {
                         log(e.getMessage());
-                        e.printStackTrace(System.err);
+                        Logger.LOGGER.debug(e);
                     }
                 });
                 thread.setDaemon(true);

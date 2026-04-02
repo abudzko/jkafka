@@ -1,7 +1,7 @@
 package by.jkafka.ui.connection.panes;
 
-import by.jkafka.config.ConnectionConfigManager;
 import by.jkafka.config.ConfigUtils;
+import by.jkafka.config.ConnectionConfigManager;
 import by.jkafka.kafka.KafkaConnection;
 import by.jkafka.ui.connection.panes.log.Logger;
 import by.jkafka.ui.elements.CustomHBox;
@@ -61,8 +61,8 @@ public class ClusterConfigPane extends Pane {
                     try {
                         kafkaConnection.testConnection();
                     } catch (Exception e) {
-                        e.printStackTrace(System.err);
                         log(e.getMessage());
+                        Logger.LOGGER.debug(e);
                     }
                 });
                 thread.setDaemon(true);
@@ -84,8 +84,8 @@ public class ClusterConfigPane extends Pane {
                         System.out.println(CONNECTION_CONFIGURATION_SAVED_MSG);
                         log(CONNECTION_CONFIGURATION_SAVED_MSG);
                     } catch (Exception e) {
-                        e.printStackTrace(System.err);
                         log(e.getMessage());
+                        Logger.LOGGER.debug(e);
                     }
                 });
                 thread.setDaemon(true);
