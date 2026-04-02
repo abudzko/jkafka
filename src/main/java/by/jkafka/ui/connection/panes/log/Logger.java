@@ -40,4 +40,8 @@ public class Logger {
     public void debug(Throwable t) {
         t.printStackTrace();
     }
+
+    public void console(String log) {
+        System.out.println(log);
+    }
 }

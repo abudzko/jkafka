@@ -3,6 +3,7 @@ package by.jkafka.ui.connection.panes.topics.send;
 import by.jkafka.kafka.KafkaConnection;
 import by.jkafka.ui.connection.panes.topics.TopicProvider;
 import by.jkafka.ui.elements.CustomHBox;
+import by.jkafka.utils.StringUtils;
 import javafx.geometry.Orientation;
 import javafx.scene.control.Button;
 import javafx.scene.control.SplitPane;
@@ -10,7 +11,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -74,8 +74,6 @@ public class SendToTopicPane extends Pane {
     }
 
     private Map<String, String> parseHeaders() {
-        var headers = new HashMap<String, String>();
-        headersTextArea.getText();
-        return headers;
+        return StringUtils.parseKeyValues(headersTextArea.getText());
     }
 }

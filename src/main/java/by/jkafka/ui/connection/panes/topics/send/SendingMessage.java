@@ -13,6 +13,7 @@ import java.util.Map;
 public class SendingMessage {
     private String topic;
     private String key;
+    // TODO allow several values for one key
     private Map<String, String> headers;
     private List<String> messages;
 }
