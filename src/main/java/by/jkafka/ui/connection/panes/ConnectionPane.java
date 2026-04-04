@@ -56,7 +56,7 @@ public class ConnectionPane extends Pane {
     }
 
     private ScrollPane createLogsScrollPane() {
-        this.logsPane = new LogPane();
+        this.logsPane = new LogPane(kafkaConnection.getConnectionConfig().getConnectionId());
         logsPane.prefWidthProperty().bind(widthProperty());
 
         var scrollPane = new ScrollPane();

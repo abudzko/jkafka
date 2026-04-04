@@ -1,22 +1,23 @@
 package by.jkafka.ui.connection.panes.log;
 
+import by.jkafka.utils.logs.Logger;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.layout.Pane;
 import lombok.SneakyThrows;
 
-import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class LogPane extends Pane {
     private final ObservableList<String> elementList;
+    private final String connectionId;
 
-    public LogPane() {
+    public LogPane(String connectionId) {
+        this.connectionId = connectionId;
         elementList = FXCollections.observableArrayList();
-        var searchableListView = new SearchableListView(elementList);
+        var searchableListView = new SearchableListView(connectionId, elementList);
 
         getChildren().add(searchableListView);
         searchableListView.prefWidthProperty().bind(widthProperty());
@@ -35,13 +36,11 @@ public class LogPane extends Pane {
 
     @SneakyThrows
     private void updateView() {
-        AtomicBoolean newLogs = Logger.LOGGER.getNewLogs();
-        if (newLogs.get()) {
-            // TODO BUG Two Connection tabs set newLogs flag
-            newLogs.set(false);
+        var newLogs = Logger.LOGGER.getLogs(connectionId);
+        if (!newLogs.isEmpty()) {
             var countDownLatch = new CountDownLatch(1);
             Platform.runLater(() -> {
-                elementList.setAll(new ArrayList<>(Logger.LOGGER.getLogs()));
+                elementList.setAll(newLogs);
                 countDownLatch.countDown();
             });
             countDownLatch.await(1000, TimeUnit.MILLISECONDS);

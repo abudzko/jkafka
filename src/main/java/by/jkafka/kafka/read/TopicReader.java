@@ -3,7 +3,8 @@ package by.jkafka.kafka.read;
 import by.jkafka.kafka.KafkaConnection;
 import by.jkafka.kafka.read.filters.EventFilter;
 import by.jkafka.kafka.read.filters.NoopEventFilter;
-import by.jkafka.ui.connection.panes.log.Logger;
+import by.jkafka.utils.logs.LogEvent;
+import by.jkafka.utils.logs.Logger;
 import lombok.Getter;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -17,6 +18,7 @@ public class TopicReader {
     @Getter
     private final String topic;
     private final KafkaConnection kafkaConnection;
+    private final String connectionId;
     private final OnReadTopicCallbacks readCallbacks;
     @Getter
     private volatile boolean started = false;
@@ -31,6 +33,7 @@ public class TopicReader {
         this.topic = topic;
         this.kafkaConnection = kafkaConnection;
         this.readCallbacks = readCallbacks;
+        this.connectionId = kafkaConnection.getConnectionConfig().getConnectionId();
     }
 
     public synchronized void start() {
@@ -85,7 +88,7 @@ public class TopicReader {
     }
 
     private void log(String log) {
-        Logger.LOGGER.log(log);
+        Logger.LOGGER.log(LogEvent.builder().connectionId(connectionId).log(log).build());
     }
 
     public int readEventsCount() {
@@ -93,7 +96,8 @@ public class TopicReader {
     }
 
     public void updateFilter(EventFilter eventFilter) {
-        Logger.LOGGER.log("Event filter applied: " + eventFilter);
+        var log = "Event filter applied: " + eventFilter;
+        Logger.LOGGER.log(LogEvent.builder().connectionId(connectionId).log(log).build());
         this.eventFilter = Objects.requireNonNullElseGet(eventFilter, NoopEventFilter::new);
     }
 }

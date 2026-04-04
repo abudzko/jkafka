@@ -1,11 +1,12 @@
 package by.jkafka.ui.connection.panes.topics;
 
 import by.jkafka.kafka.KafkaConnection;
-import by.jkafka.ui.connection.panes.log.Logger;
 import by.jkafka.kafka.read.OnReadTopicCallbacks;
 import by.jkafka.ui.connection.panes.topics.read.ReadFromTopicPane;
 import by.jkafka.ui.connection.panes.topics.send.SendToTopicPane;
 import by.jkafka.ui.elements.CustomHBox;
+import by.jkafka.utils.logs.LogEvent;
+import by.jkafka.utils.logs.Logger;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
@@ -241,7 +242,6 @@ public class KafkaTopicsPane extends Pane {
                         var topics = kafkaConnection.getTopics();
                         Platform.runLater(() -> {
                             topicList.setAll(topics);
-                            log("Topics refreshing: finished");
                         });
                     } catch (Exception e) {
                         log(e.getMessage());
@@ -260,6 +260,7 @@ public class KafkaTopicsPane extends Pane {
     }
 
     private void log(String log) {
-        Logger.LOGGER.log(log);
+        var connectionId = kafkaConnection.getConnectionConfig().getConnectionId();
+        Logger.LOGGER.log(LogEvent.builder().connectionId(connectionId).log(log).build());
     }
 }

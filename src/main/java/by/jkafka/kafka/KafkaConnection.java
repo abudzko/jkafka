@@ -5,8 +5,9 @@ import by.jkafka.kafka.info.Partition;
 import by.jkafka.kafka.info.TopicInfo;
 import by.jkafka.kafka.read.OnReadTopicCallbacks;
 import by.jkafka.kafka.read.TopicReader;
-import by.jkafka.ui.connection.panes.log.Logger;
 import by.jkafka.ui.connection.panes.topics.send.SendingMessage;
+import by.jkafka.utils.logs.LogEvent;
+import by.jkafka.utils.logs.Logger;
 import lombok.Getter;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.Callback;
@@ -88,8 +89,8 @@ public class KafkaConnection {
                     var result = future.get(3000, TimeUnit.SECONDS);
                 } catch (InterruptedException | ExecutionException | TimeoutException e) {
                     producer.close();
-                    var msg = "Error in producer: " + e.getMessage();
-                    Logger.LOGGER.log(msg);
+                    var log = "Error in producer: " + e.getMessage();
+                    Logger.LOGGER.log(LogEvent.builder().connectionId(connectionConfig.getConnectionId()).log(log).build());
                     Logger.LOGGER.debug(e);
                 }
             });
@@ -138,7 +139,7 @@ public class KafkaConnection {
                 });
                 topicInfo.getPartitions().add(partition);
             });
-            log(opName + ": finished");
+            log(opName + ": success");
             return Optional.of(topicInfo);
         } catch (org.apache.kafka.common.errors.TimeoutException e) {
             String msg = opName + ": failed to connect due to timeout " + seconds + " sec. " + e.getMessage();
@@ -153,6 +154,6 @@ public class KafkaConnection {
     }
 
     private void log(String log) {
-        Logger.LOGGER.log(log);
+        Logger.LOGGER.log(LogEvent.builder().connectionId(connectionConfig.getConnectionId()).log(log).build());
     }
 }

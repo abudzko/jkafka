@@ -3,7 +3,8 @@ package by.jkafka.ui.connection.panes;
 import by.jkafka.config.ConfigUtils;
 import by.jkafka.config.ConnectionConfigManager;
 import by.jkafka.kafka.KafkaConnection;
-import by.jkafka.ui.connection.panes.log.Logger;
+import by.jkafka.utils.logs.LogEvent;
+import by.jkafka.utils.logs.Logger;
 import by.jkafka.ui.elements.CustomHBox;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
@@ -96,6 +97,7 @@ public class ClusterConfigPane extends Pane {
     }
 
     private void log(String log) {
-        Logger.LOGGER.log(log);
+        var connectionId = kafkaConnection.getConnectionConfig().getConnectionId();
+        Logger.LOGGER.log(LogEvent.builder().connectionId(connectionId).log(log).build());
     }
 }

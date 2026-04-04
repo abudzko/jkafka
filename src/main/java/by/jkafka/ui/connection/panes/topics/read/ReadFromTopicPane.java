@@ -34,6 +34,7 @@ public class ReadFromTopicPane extends Pane {
     private final Button readButton;
     private final Button refreshInfoButton;
     private final TextArea infoTextArea;
+    private final String connectionId;
 
 
     public ReadFromTopicPane(
@@ -42,6 +43,7 @@ public class ReadFromTopicPane extends Pane {
             OnReadTopicCallbacks onReadTopicCallbacks
     ) {
         this.kafkaConnection = kafkaConnection;
+        this.connectionId = kafkaConnection.getConnectionConfig().getConnectionId();
         this.topicProvider = topicProvider;
         this.onReadTopicCallbacks = onReadTopicCallbacks;
         this.consumerRecordService = new ConsumerRecordService();
@@ -144,7 +146,7 @@ public class ReadFromTopicPane extends Pane {
                             @Override
                             public void consume(ConsumerRecord<String, Object> record) {
                                 onReadTopicCallbacks.consume(record);
-                                consumerRecordService.saveRecord(record);
+                                consumerRecordService.saveRecord(connectionId, record);
                             }
                         })
                 );

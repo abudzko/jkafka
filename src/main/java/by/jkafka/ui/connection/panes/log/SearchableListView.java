@@ -1,6 +1,7 @@
 package by.jkafka.ui.connection.panes.log;
 
 import by.jkafka.ui.elements.CustomHBox;
+import by.jkafka.utils.logs.Logger;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.geometry.Insets;
@@ -16,9 +17,11 @@ import java.util.List;
 class SearchableListView extends VBox {
     protected static final String DELETE_LOGS_BUTTON_MSG = "Delete logs";
     protected static final String RESET_SEARCH_BUTTON_MSG = "X";
+    private final String connectionId;
     private final ObservableList<String> elementList;
 
-    SearchableListView(ObservableList<String> elementList) {
+    SearchableListView(String connectionId, ObservableList<String> elementList) {
+        this.connectionId = connectionId;
         this.elementList = elementList;
         setSpacing(5);
         setPadding(new Insets(5));
@@ -48,7 +51,7 @@ class SearchableListView extends VBox {
 
         var deleteLogsButton = new Button(DELETE_LOGS_BUTTON_MSG);
         deleteLogsButton.setOnAction(e -> {
-            Logger.LOGGER.clear();
+            Logger.LOGGER.clear(connectionId);
             elementList.setAll(List.of());
         });
 
