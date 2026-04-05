@@ -2,6 +2,7 @@ package by.jkafka.ui.connection.panes;
 
 import by.jkafka.config.ConnectionConfig;
 import by.jkafka.kafka.KafkaConnection;
+import by.jkafka.ui.connection.panes.config.ConfigPane;
 import by.jkafka.ui.connection.panes.log.LogPane;
 import by.jkafka.ui.connection.panes.topics.KafkaTopicsPane;
 import by.jkafka.ui.elements.CollapsiblePane;
@@ -12,9 +13,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
 public class ConnectionPane extends Pane {
-
     private final KafkaConnection kafkaConnection;
-    private ClusterConfigPane clusterConfigPane;
     private KafkaTopicsPane kafkaTopicsPane;
     private LogPane logsPane;
 
@@ -25,19 +24,19 @@ public class ConnectionPane extends Pane {
 
     private void initPane() {
         var topVBox = new VBox();
-        clusterConfigPane = new ClusterConfigPane(kafkaConnection);
         kafkaTopicsPane = new KafkaTopicsPane(kafkaConnection);
 
-        var clusterConfigPane = new CollapsiblePane("Cluster config", this.clusterConfigPane);
-        clusterConfigPane.setExpanded(false);
-        var topicsPane = new CollapsiblePane("Topics", this.kafkaTopicsPane);
-        clusterConfigPane.prefWidthProperty().bind(widthProperty());
+        var configPane = new ConfigPane(kafkaConnection);
+        configPane.prefWidthProperty().bind(widthProperty());
+        var collapsibleConfigsPane = new CollapsiblePane("Configs: id = " + kafkaConnection.getConnectionConfig().getConnectionId(), configPane);
+        collapsibleConfigsPane.setExpanded(false);
 
+        var topicsPane = new CollapsiblePane("Topics", this.kafkaTopicsPane);
         topicsPane.prefWidthProperty().bind(widthProperty());
         topicsPane.prefHeightProperty().bind(heightProperty());
         kafkaTopicsPane.prefHeightProperty().bind(topicsPane.heightProperty());
 
-        topVBox.getChildren().addAll(clusterConfigPane, topicsPane);
+        topVBox.getChildren().addAll(collapsibleConfigsPane, topicsPane);
         var topScrollPane = new ScrollPane();
 
         topScrollPane.setPannable(true);

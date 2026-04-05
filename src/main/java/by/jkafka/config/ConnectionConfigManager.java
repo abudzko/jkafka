@@ -49,7 +49,7 @@ public class ConnectionConfigManager {
         var connectionConfigPath = CONFIG_ROOT_PATH.resolve(connectionConfig.getConnectionId());
         Map.of(
                 KAFKA_CONFIG_FILE_NAME, connectionConfig.getKafkaConfig(),
-                UI_CONFIG_FILE_NAME, connectionConfig.getKafkaConfig()
+                UI_CONFIG_FILE_NAME, connectionConfig.getUiConfig()
         ).forEach((filePath, configMap) ->
                 FileUtils.save(connectionConfigPath.resolve(filePath), toStr(configMap)));
 

@@ -1,6 +1,6 @@
 package by.jkafka.utils;
 
-import by.jkafka.ui.connection.panes.ClusterConfigPane;
+import by.jkafka.ui.connection.panes.config.ClusterConfigPane;
 import lombok.SneakyThrows;
 
 import java.nio.charset.StandardCharsets;

@@ -1,4 +1,4 @@
-package by.jkafka.ui.connection.panes;
+package by.jkafka.ui.connection.panes.config;
 
 import by.jkafka.config.ConfigUtils;
 import by.jkafka.config.ConnectionConfigManager;
@@ -82,7 +82,6 @@ public class ClusterConfigPane extends Pane {
                     try {
                         refreshClusterConfig();
                         ConnectionConfigManager.saveConfig(kafkaConnection.getConnectionConfig());
-                        System.out.println(CONNECTION_CONFIGURATION_SAVED_MSG);
                         log(CONNECTION_CONFIGURATION_SAVED_MSG);
                     } catch (Exception e) {
                         log(e.getMessage());
