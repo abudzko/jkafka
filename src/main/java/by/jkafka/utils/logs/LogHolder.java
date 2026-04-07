@@ -1,10 +1,9 @@
 package by.jkafka.utils.logs;
 
+import by.jkafka.utils.DateTimeUtils;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -16,7 +15,6 @@ import java.util.concurrent.LinkedBlockingDeque;
 @Getter
 @Builder
 public class LogHolder {
-    private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("hh:mm:ss");
     private final String id;
     private final LinkedBlockingDeque<String> logs;
     private volatile boolean hasNewLogs;
@@ -25,7 +23,7 @@ public class LogHolder {
         while (logs.remainingCapacity() <= 0) {
             logs.pollLast();
         }
-        var msg = dateTimeFormatter.format(LocalDateTime.now()) + " " + event.getLog();
+        var msg = DateTimeUtils.now() + " " + event.getLog();
         logs.push(msg);
         hasNewLogs = true;
     }

@@ -1,7 +1,12 @@
 package by.jkafka.utils;
 
 
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -50,5 +55,29 @@ public class StringUtils {
             return new String[]{line.substring(0, idx), line.substring(idx + 1)};
         }
         return null;
+    }
+
+    public static String buildLog(ConsumerRecord<String, Object> record) {
+        var strBuilder = new StringBuilder();
+        var headers = parseHeaders(record);
+        strBuilder
+                .append(DateTimeUtils.now())
+                .append(" Topic[")
+                .append(record.topic())
+                .append("]: Key[")
+                .append(record.key())
+                .append("], Headers")
+                .append(headers)
+                .append(", Data[")
+                .append(record.value())
+                .append("]")
+                .append(System.lineSeparator());
+        return strBuilder.toString();
+    }
+
+    private static List<String> parseHeaders(ConsumerRecord<String, Object> record) {
+        return Arrays.stream(record.headers().toArray())
+                .map(header -> header.key() + KEY_VALUE_SEPARATOR + new String(header.value(), StandardCharsets.UTF_8))
+                .collect(Collectors.toList());
     }
 }

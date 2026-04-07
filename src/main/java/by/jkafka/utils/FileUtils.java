@@ -6,6 +6,7 @@ import lombok.SneakyThrows;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.Objects;
 
 public class FileUtils {
@@ -25,5 +26,15 @@ public class FileUtils {
         var absolutePath = path.toAbsolutePath().normalize();
         Files.createDirectories(absolutePath.getParent());
         Files.writeString(absolutePath, source);
+    }
+
+    /**
+     * Creates parent dirs if not exist
+     */
+    @SneakyThrows
+    public static void appendToFile(Path path, String source) {
+        var absolutePath = path.toAbsolutePath().normalize();
+        Files.createDirectories(absolutePath.getParent());
+        Files.writeString(absolutePath, source, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
     }
 }

@@ -7,6 +7,7 @@ import by.jkafka.kafka.read.filters.NoopEventFilter;
 import by.jkafka.kafka.read.filters.StringValueEventFilter;
 import by.jkafka.ui.connection.panes.topics.TopicProvider;
 import by.jkafka.ui.elements.CustomHBox;
+import by.jkafka.utils.DateTimeUtils;
 import by.jkafka.utils.StringUtils;
 import javafx.application.Platform;
 import javafx.scene.control.Button;
@@ -17,8 +18,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -103,9 +102,8 @@ public class ReadFromTopicPane extends Pane {
         var topic = topicProvider.topic();
         var topicInfoOptional = kafkaConnection.getTopicInfo(topic);
         topicInfoOptional.ifPresent(topicInfo -> {
-            var now = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss").format(LocalDateTime.now());
             var builder = new StringBuilder();
-            builder.append(now).append(System.lineSeparator())
+            builder.append(DateTimeUtils.now()).append(System.lineSeparator())
                     .append("Topic: ").append(topicInfo.getTopic()).append(System.lineSeparator());
             topicInfo.getPartitions().forEach(p -> {
                 builder.append("Partition: ").append(p.getPartition())

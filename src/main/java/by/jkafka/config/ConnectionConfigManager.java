@@ -1,6 +1,7 @@
 package by.jkafka.config;
 
 import by.jkafka.ui.connection.ClusterConfigTemplate;
+import by.jkafka.ui.connection.ConnectionTemplate;
 import by.jkafka.utils.FileUtils;
 import lombok.SneakyThrows;
 
@@ -8,6 +9,7 @@ import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import static by.jkafka.config.ConfigUtils.CONFIG_ROOT_PATH;
@@ -25,6 +27,17 @@ public class ConnectionConfigManager {
         var clusterConfig = new ConnectionConfig(connectionId);
         clusterConfig.setKafkaConfig(configMap);
         return clusterConfig;
+    }
+
+    public static Map<String, String> defaultClusterConfig() {
+        var resource = FileUtils.readResource(ConnectionTemplate.DEFAULT.getTemplatePath());
+        return ConfigUtils.parseConfig(resource);
+    }
+
+    public static Map<String, String> defaultUiConfig(String connectionId) {
+        var propsMap = new ConcurrentHashMap<String, String>();
+        propsMap.put(ConfigConstants.CONNECTION_NAME_PROP, connectionId);
+        return propsMap;
     }
 
     private static String createConnectionId() {
@@ -52,6 +65,5 @@ public class ConnectionConfigManager {
                 UI_CONFIG_FILE_NAME, connectionConfig.getUiConfig()
         ).forEach((filePath, configMap) ->
                 FileUtils.save(connectionConfigPath.resolve(filePath), toStr(configMap)));
-
     }
 }

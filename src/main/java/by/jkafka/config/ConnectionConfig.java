@@ -17,11 +17,13 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class ConnectionConfig {
     private final String connectionId;
     private final Map<String, CopyOnWriteArrayList<ConfigChangedListener>> uiConfigListener = new ConcurrentHashMap<>();
-    private Map<String, String> kafkaConfig = new ConcurrentHashMap<>();
-    private Map<String, String> uiConfig = new ConcurrentHashMap<>();
+    private Map<String, String> kafkaConfig;
+    private Map<String, String> uiConfig;
 
     public ConnectionConfig(String connectionId) {
         this.connectionId = connectionId;
+        this.kafkaConfig = ConnectionConfigManager.defaultClusterConfig();
+        this.uiConfig = ConnectionConfigManager.defaultUiConfig(connectionId);
     }
 
     public void addNewUiConfigListener(String name, ConfigChangedListener listener) {
@@ -34,9 +36,9 @@ public class ConnectionConfig {
         return kafkaConfig;
     }
 
-    public void updateUiConfig(Map<String, String> uiConfig) {
-        var changedUiProps = collectChangedUiProps(uiConfig);
-        this.uiConfig.putAll(uiConfig);
+    public void updateUiConfig(Map<String, String> newUiConfig) {
+        var changedUiProps = collectChangedUiProps(newUiConfig);
+        this.uiConfig.putAll(newUiConfig);
         notifyListenersOnChange(changedUiProps);
     }
 
@@ -47,12 +49,14 @@ public class ConnectionConfig {
                 }));
     }
 
-    private LinkedList<String> collectChangedUiProps(Map<String, String> uiConfig) {
+    private LinkedList<String> collectChangedUiProps(Map<String, String> newUiConfig) {
         var diff = new LinkedList<String>();
-        uiConfig.forEach((key, value) -> {
-            if (!this.uiConfig.get(key).equals(value)) {
-                diff.add(key);
-            }
+        newUiConfig.forEach((key, newValue) -> {
+            Optional.ofNullable(this.uiConfig.get(key)).ifPresent(currentValue -> {
+                if (!currentValue.equals(newValue)) {
+                    diff.add(key);
+                }
+            });
         });
         return diff;
     }
